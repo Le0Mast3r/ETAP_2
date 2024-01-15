@@ -1,4 +1,4 @@
-name: Python Workflow 1 
+name: TP ETAP 2 
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build:
+  build_and_deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,3 +20,20 @@ jobs:
 
     - name: Execute Python script
       run: python script.py
+
+    - name: Set up Docker
+      uses: actions/setup-docker@v2
+      with:
+        dockerfile: Dockerfile
+
+    - name: Build Docker image
+      run: docker build -t bing0t/app2:latest .
+
+    - name: Run unit tests
+      run: docker run bing0t/app2:latest python script.py 
+
+    - name: Login to Docker Hub
+      run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Push to Docker Hub
+      run: docker push aelbouad/etpa2:latest
